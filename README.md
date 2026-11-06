@@ -5,7 +5,7 @@
 
 # Documentation GA (20%)	
 ### [Documentées et justifiées les choix de conception] 
-### [Documentées et justifiées les choix d’implémentation pour cette modification de workflow ]
+### [Documentées et justifiées les choix d’implémentation pour cette modification de workflow]
 ### [Documentées et justifiées la validation des modifications (la manière dont cette modification a été validée)]
 
 # Vulnérabilités (30%)	
