@@ -1,11 +1,11 @@
 # README Tâche 3
 
-# Documentation GA (20%)	
-### Documentation et justification des  choix d’implémentation pour cette modification de workflow et des choix de conception
+# Documentation GA 
+### Documentation et justification des choix de conception et des choix d’implémentation pour cette modification de workflow
 
 L'objectif est d'intégrer une analyse de sécurité au workflow GitHub Actions afin d'empêcher l'introduction de nouvelles vulnérabilités dans le projet Tika.
 
-Semgrep a été retenu pour effectuer cette analyse statique. Une comparaison avec une version de référence (*baseline*) permet de distinguer les nouvelles vulnérabilités de celles déjà présentes dans le projet, évitant ainsi de bloquer le build pour des problèmes préexistants.
+Semgrep a été retenu pour effectuer cette analyse statique. Une comparaison avec une version de référence (baseline) permet de distinguer les nouvelles vulnérabilités de celles déjà présentes dans le projet, évitant ainsi de bloquer le build pour des problèmes préexistants.
 
 L'analyse est exécutée avant le build afin qu'une nouvelle vulnérabilité détectée puisse interrompre le processus. Des rapports différentiels et complets sont également conservés pour identifier les nouvelles vulnérabilités et obtenir une vue d'ensemble des résultats.
 
@@ -79,13 +79,10 @@ Finalement, le job `build` possède la dépendance suivante :
 
 Cette dépendance garantit que le build attend la réussite du job Semgrep avant de commencer.
 
-### [Documentées et justifiées la validation des modifications (la manière dont cette modification a été validée)]
+### Documentation et justification de la validation des modifications 
 
-# Vulnérabilités (30%)	
-### [Modifier le code  Tika pour introduire 7 vulnérabilités de types différents détectables par Semgrep]
-
-# Documentation vulnérabilités (20%)	
-### [Documenter, justifier, expliquer chaque vulnérabilité insérée:]
+# Documentation vulnérabilités	
+[Documenter, justifier, expliquer chaque vulnérabilité insérée:]
 ### Vulnérabilité 1
 <table>
   <tr>
@@ -226,8 +223,6 @@ Cette dépendance garantit que le build attend la réussite du job Semgrep avant
   </tr>
 </table>
 
-### [Comparer le rapport Semgrep obtenu avant les modifications avec le rapport obtenu après l’introduction des vulnérabilités, afin de montrer quelles vulnérabilités sont nouvellement introduites]
+### Comparaison des rapports Semgrep obtenus avant les modifications et après l’introduction des vulnérabilités
+[Comparer le rapport Semgrep obtenu avant les modifications avec le rapport obtenu après l’introduction des vulnérabilités, afin de montrer quelles vulnérabilités sont nouvellement introduites]
 
-# Humour (10%)	
-### [Introduire un élément d'humour dans la suite de test de graphhopper: rickroll quand un cas de test de graphhopper échoue]
-  #### [Pour cela, vous invoquerez une action réutilisable qui rickroll, par exemple, en modifiant la github action existante random-rickroll, ou bien faire votre propre implémentation d'une action qui rickroll, par exemple en rust.]
