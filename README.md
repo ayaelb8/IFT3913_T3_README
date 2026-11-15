@@ -1,11 +1,84 @@
 # README Tâche 3
 
-# Github action (GA) (20%)	
-### [Modifier le workflow GitHub Actions du cas d'étude de telle sorte que le processus de build échoue si un commit introduit une nouvelle vulnérabilité détectée par Semgrep]
-
 # Documentation GA (20%)	
-### [Documentées et justifiées les choix de conception] 
-### [Documentées et justifiées les choix d’implémentation pour cette modification de workflow]
+### Documentation et justification des  choix d’implémentation pour cette modification de workflow et des choix de conception
+
+L'objectif est d'intégrer une analyse de sécurité au workflow GitHub Actions afin d'empêcher l'introduction de nouvelles vulnérabilités dans le projet Tika.
+
+Semgrep a été retenu pour effectuer cette analyse statique. Une comparaison avec une version de référence (*baseline*) permet de distinguer les nouvelles vulnérabilités de celles déjà présentes dans le projet, évitant ainsi de bloquer le build pour des problèmes préexistants.
+
+L'analyse est exécutée avant le build afin qu'une nouvelle vulnérabilité détectée puisse interrompre le processus. Des rapports différentiels et complets sont également conservés pour identifier les nouvelles vulnérabilités et obtenir une vue d'ensemble des résultats.
+
+Le job `semgrep` a été ajouté dans la section `jobs` du fichier `.github/workflows/main-jdk17-build.yml`. Il s'exécute sur `ubuntu-latest` et possède une limite de 30 minutes. 
+
+**Configuration de Semgrep**
+
+La version utilisée et les ensembles de règles sont définis dans les variables d'environnement du job :
+
+```yaml
+    env:
+      SEMGREP_VERSION: '1.185.0'
+      SEMGREP_RULES: '--config p/java --config p/security-audit --config p/secrets'
+```
+
+Semgrep est ensuite installé à l'aide de `pipx` :
+
+```yaml
+      - name: Install Semgrep
+        run: pipx install "semgrep==${SEMGREP_VERSION}"
+```
+
+**Récupération de la version de référence**
+
+Le paramètre `fetch-depth: 0` permet de récupérer l'historique Git complet du dépôt, nécessaire pour ecomparer avec le commit de référence.
+
+```yaml
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+```
+
+Le workflow détermine ensuite le commit de référence selon le type d'événement. Pour une pull request, il utilise `github.event.pull_request.base.sha`. Pour un push, il utilise `github.event.before`. Si le commit est absent, invalide ou correspond à une nouvelle branche, le commit parent est utilisé comme solution de repli.
+
+**Analyse des nouvelles vulnérabilités**
+
+Une fois la référence déterminée, Semgrep compare le code courant à celle-ci avec `--baseline-commit`. L'option `--error` permet de faire échouer la commande lorsqu'une nouvelle vulnérabilité est détectée.
+
+```yaml
+          semgrep scan $SEMGREP_RULES --metrics=off \
+            --baseline-commit "$BASELINE_SHA" \
+            --error \
+            --json-output="$RUNNER_TEMP/semgrep-reports/semgrep-nouvelles.json" \
+            --sarif-output="$RUNNER_TEMP/semgrep-reports/semgrep-nouvelles.sarif"
+```
+
+**Génération et conservation des rapports**
+
+En complément de l'analyse différentielle, une analyse complète génère des rapports sur les vulnérabilités présentes dans le projet. Elle utilise `if: always()` afin de s'exécuter même si l'analyse différentielle échoue. Contrairement à cette dernière, elle sert à produire un rapport et non à bloquer le build.
+
+```yaml
+      - name: Semgrep full report
+        if: always()
+        run: |
+          semgrep scan $SEMGREP_RULES --metrics=off \
+            --json-output="$RUNNER_TEMP/semgrep-reports/semgrep-complet.json" \
+            --sarif-output="$RUNNER_TEMP/semgrep-reports/semgrep-complet.sarif" \
+            --quiet > /dev/null
+```
+
+Les rapports sont ensuite téléversés comme artefacts GitHub Actions, également avec `if: always()`, afin de pouvoir les consulter après l'exécution du workflow.
+
+**Dépendance avec le build**
+
+Finalement, le job `build` possède la dépendance suivante :
+
+```yaml
+  build:
+    needs: semgrep
+```
+
+Cette dépendance garantit que le build attend la réussite du job Semgrep avant de commencer.
+
 ### [Documentées et justifiées la validation des modifications (la manière dont cette modification a été validée)]
 
 # Vulnérabilités (30%)	
