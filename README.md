@@ -257,3 +257,6 @@ Les alertes qui apparaissent seulement dans le rapport après sont :
 - `des-is-deprecated` dans `CryptoParser.java` (ligne 77)
 
 Ça fait bien 9 alertes pour nos 7 vulnérabilités (le TrustManager compte pour 3). Les 19 alertes du début sont toujours dans le rapport après et aucune n'a disparu, donc les nouvelles alertes sont exactement celles qu'on a ajoutées.
+
+## Signalement de l'utilisation de l'IAg
+Je reconnais avoir utilisé ChatGPT (GPT-6, OpenAI, https://chatgpt.com/) tout au long du projet comme outil d’assistance pour comprendre des concepts, explorer des pistes de solution, résoudre des problèmes techniques, reformuler certaines idées, générer des propositions de contenu et structurer certaines parties du travail.
